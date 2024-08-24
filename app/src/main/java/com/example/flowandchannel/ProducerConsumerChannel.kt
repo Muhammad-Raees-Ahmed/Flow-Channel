@@ -7,7 +7,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class ProducerConsumer @Inject constructor() : Any() {
+class ProducerConsumerChannel @Inject constructor() : Any() {
 
     private val channel = Channel<String>()
 
@@ -21,9 +21,9 @@ class ProducerConsumer @Inject constructor() : Any() {
 
     suspend fun consumeData(){
         CoroutineScope(Dispatchers.IO).launch {
-            Log.d("TAG", "consumeData: ${channel.receive()}")
-            Log.d("TAG", "consumeData: ${channel.receive()}")
-            Log.d("TAG", "consumeData: ${channel.receive()}")
+            Log.d("TAG", "consumeData: channel  ${channel.receive()}")
+            Log.d("TAG", "consumeData: channel ${channel.receive()}")
+            Log.d("TAG", "consumeData: channel ${channel.receive()}")
         }
     }
 }

@@ -14,7 +14,7 @@ class MainActivity : AppCompatActivity() {
      lateinit var user: User
 
     @Inject
-     lateinit var consumerProducer: ProducerConsumer
+     lateinit var consumerProducer: ProducerConsumerChannel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
