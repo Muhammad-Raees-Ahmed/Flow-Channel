@@ -1,8 +1,9 @@
 package com.example.flowandchannel
 
 import kotlinx.coroutines.delay
+import javax.inject.Inject
 
-class User:Any() {
+class User @Inject constructor() :Any() {
     suspend fun getUsers(): List<String> {
         var names = mutableListOf<String>()
         names.add(getUserName(1))
