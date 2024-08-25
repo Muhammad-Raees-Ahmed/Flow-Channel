@@ -7,8 +7,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ProducerConsumerFlow {
+class ProducerConsumerFlow @Inject constructor() {
 
 
     suspend fun produceData(): Flow<Int> {

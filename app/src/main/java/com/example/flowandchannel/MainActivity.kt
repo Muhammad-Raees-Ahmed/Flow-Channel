@@ -15,6 +15,9 @@ class MainActivity : AppCompatActivity() {
 
     @Inject
      lateinit var consumerProducer: ProducerConsumerChannel
+
+     @Inject
+     lateinit var producerConsumerFlow: ProducerConsumerFlow
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -26,11 +29,18 @@ class MainActivity : AppCompatActivity() {
 //            }
 //        }
         // channel example returning stream
+//        CoroutineScope(Dispatchers.IO).launch {
+//            consumerProducer.produceData()
+//        }
+//        CoroutineScope(Dispatchers.IO).launch {
+//            consumerProducer.consumeData()
+//        }
+        // flow example returning stream
         CoroutineScope(Dispatchers.IO).launch {
-            consumerProducer.produceData()
+            producerConsumerFlow.produceData()
         }
         CoroutineScope(Dispatchers.IO).launch {
-            consumerProducer.consumeData()
+            producerConsumerFlow.collectData()
         }
     }
 }
