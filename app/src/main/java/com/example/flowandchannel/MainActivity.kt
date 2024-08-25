@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -36,11 +37,19 @@ class MainActivity : AppCompatActivity() {
 //            consumerProducer.consumeData()
 //        }
         // flow example returning stream
+
+
         CoroutineScope(Dispatchers.IO).launch {
             producerConsumerFlow.produceData()
         }
-        CoroutineScope(Dispatchers.IO).launch {
+        // consumer 1
+         CoroutineScope(Dispatchers.IO).launch {
             producerConsumerFlow.collectData()
+        }
+
+        // consumer 2
+         CoroutineScope(Dispatchers.IO).launch {
+            producerConsumerFlow.collectDataTwo()
         }
     }
 }
