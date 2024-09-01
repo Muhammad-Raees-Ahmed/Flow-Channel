@@ -1,18 +1,23 @@
 package com.example.flowandchannel
 
+import android.content.ContentValues.TAG
 import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class ProducerConsumerFlow @Inject constructor() {
 
 
-    suspend fun produceData(): Flow<Int> {
+     fun produceData(): Flow<Int> {
         val list = listOf(1, 2, 6, 4, 80,6,3,7,8)
 
         return flow {
@@ -26,7 +31,18 @@ class ProducerConsumerFlow @Inject constructor() {
     suspend fun collectData(){
         CoroutineScope(Dispatchers.IO).launch {
             var data=produceData()
-            data.collect{
+            data
+                .onStart {
+                    Log.d("TAG", "onStart Run ")
+                }
+                .onCompletion {
+                    Log.d("TAG", "onCompleted Run: ")
+                }
+                .onEach {
+                    Log.d("TAG", "on Each : upcoming item is $it ")
+                }
+                .collect{
+
                 Log.d("TAG", "collectData flow consumer 1:  $it")
             }
         }

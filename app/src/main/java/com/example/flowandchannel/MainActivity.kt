@@ -38,18 +38,17 @@ class MainActivity : AppCompatActivity() {
 //        }
         // flow example returning stream
 
-
-        CoroutineScope(Dispatchers.IO).launch {
             producerConsumerFlow.produceData()
-        }
+
         // consumer 1
          CoroutineScope(Dispatchers.IO).launch {
             producerConsumerFlow.collectData()
         }
 
         // consumer 2
-         CoroutineScope(Dispatchers.IO).launch {
-            producerConsumerFlow.collectDataTwo()
-        }
+//         CoroutineScope(Dispatchers.IO).launch {
+//            producerConsumerFlow.collectDataTwo()
+//        }
     }
+
 }
