@@ -33,9 +33,11 @@ class ProducerConsumerFlow @Inject constructor() {
             var data=produceData()
             data
                 .onStart {
+                    emit(0)
                     Log.d("TAG", "onStart Run ")
                 }
                 .onCompletion {
+                    emit(-7)
                     Log.d("TAG", "onCompleted Run: ")
                 }
                 .onEach {
