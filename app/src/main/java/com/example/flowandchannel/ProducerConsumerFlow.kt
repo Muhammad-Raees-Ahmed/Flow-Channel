@@ -7,6 +7,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
@@ -18,6 +19,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.math.log
+import kotlin.system.measureTimeMillis
 
 class ProducerConsumerFlow @Inject constructor() {
 
@@ -46,18 +48,24 @@ class ProducerConsumerFlow @Inject constructor() {
 
     suspend fun collectDataName() {
         CoroutineScope(Dispatchers.IO).launch {
-            var data = produceDataName()
+            val time= measureTimeMillis {
+                var data = produceDataName()
 
-            data
-                .map {
-                    it.uppercase()
-                }
-                .filter {
-                    it.contains('A')
-                }
-                .collect {
-                    Log.d("TAG", "collectData flow Names :  $it")
-                }
+                data
+                    .map {
+                        it.uppercase()
+                    }
+                    .filter {
+                        it.contains('A')
+                    }
+                    .buffer(8)
+                    .collect {
+                        delay(5500)
+                        Log.d("TAG", "collectData flow Names :  $it")
+                    }    
+            }
+            Log.d("TAG", "collectDataName: ${time}")
+            
         }
 
 
