@@ -8,8 +8,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
@@ -74,10 +76,28 @@ class MainActivity : AppCompatActivity() {
 //            producerConsumerFlow.collectDataTwo()
 //        }
 
-//        CoroutineScope(Dispatchers.IO).launch {
-//            produceNumbers().collect{
-//                Log.d("TAG", "onCreate: ${it}")
-//            }
+        CoroutineScope(Dispatchers.Main).launch {
+
+            produceNumbers()
+                .map {
+                    it.uppercase()
+                }
+                .flowOn(Dispatchers.IO)
+                .collect {
+                    Log.d("TAG", " Collect at Thread ${Thread.currentThread().name} ,  ${it}")
+
+                }
+        }
+
+//        CoroutineScope(Dispatchers.Main).launch {
+//            produceNumbers()
+//                .filter {
+//                    it.contains('a')
+//                }
+//                .collect {
+//                    delay(2500)
+//                    Log.d("TAG", "Consumer 2: ${it}")
+//                }
 //        }
 
         Log.d("TAG", "onCreate my flow : ${produceNumbers()}")
@@ -89,6 +109,7 @@ class MainActivity : AppCompatActivity() {
         return flow {
             list.forEach {
                 delay(2500)
+                Log.d("TAG", " Emit at Thread ${Thread.currentThread().name}")
                 emit(it)
             }
         }
