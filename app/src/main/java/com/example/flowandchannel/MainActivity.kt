@@ -8,6 +8,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
@@ -92,7 +93,7 @@ class MainActivity : AppCompatActivity() {
                     .collect {
 
                         Log.d("TAG", " Collect at Thread ${Thread.currentThread().name} ,  ${it}")
-                        throw Exception("Error Agya hy !")
+
                     }
             } catch (e: Exception) {
                 Log.d("TAG", "Error : $e ")
@@ -123,9 +124,13 @@ class MainActivity : AppCompatActivity() {
                 delay(2500)
                 Log.d("TAG", " Emit at Thread ${Thread.currentThread().name} , $it")
                 emit(it)
-//                throw Exception("Error Agya hy !")
+                throw Exception("Error Agya hy !")
             }
+        }.catch {
+            Log.d("TAG", "Error at producers: ")
+            emit("error aya hy")
         }
+
     }
 
 }
