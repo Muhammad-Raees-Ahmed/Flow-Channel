@@ -78,15 +78,27 @@ class MainActivity : AppCompatActivity() {
 
         CoroutineScope(Dispatchers.Main).launch {
 
-            produceNumbers()
-                .map {
-                    it.uppercase()
-                }
-                .flowOn(Dispatchers.IO)
-                .collect {
-                    Log.d("TAG", " Collect at Thread ${Thread.currentThread().name} ,  ${it}")
+            try {
+                produceNumbers()
+                    .map {
+                        it.uppercase()
+                    }
+                    .filter {
+                        delay(1000)
+                        it.contains('A')
 
-                }
+                    }
+                    .flowOn(Dispatchers.IO)
+                    .collect {
+
+                        Log.d("TAG", " Collect at Thread ${Thread.currentThread().name} ,  ${it}")
+                        throw Exception("Error Agya hy !")
+                    }
+            } catch (e: Exception) {
+                Log.d("TAG", "Error : $e ")
+            }
+
+
         }
 
 //        CoroutineScope(Dispatchers.Main).launch {
@@ -109,8 +121,9 @@ class MainActivity : AppCompatActivity() {
         return flow {
             list.forEach {
                 delay(2500)
-                Log.d("TAG", " Emit at Thread ${Thread.currentThread().name}")
+                Log.d("TAG", " Emit at Thread ${Thread.currentThread().name} , $it")
                 emit(it)
+//                throw Exception("Error Agya hy !")
             }
         }
     }
