@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.jvm.Throws
 import kotlin.math.log
 import kotlin.system.measureTimeMillis
 
@@ -27,6 +28,7 @@ class ProducerConsumerFlow @Inject constructor() {
     fun produceData(): Flow<Int> {
         val list = listOf(1, 2, 6, 4, 80, 6, 3, 7, 8)
 
+        Log.d("TAG", "produceData: ${Thread.currentThread().name}")
         return flow {
             list.forEach {
                 delay(1000)
@@ -69,26 +71,39 @@ class ProducerConsumerFlow @Inject constructor() {
         }
 
 
+
+        suspend fun collectDataNumber() {
+            CoroutineScope(Dispatchers.IO).launch {
+                var data = produceData()
+                data
+                    .collect{
+
+                        Log.d("TAG", "collectData flow consumer 1:  $it")
+                    }
+            }
+        }
+
         suspend fun collectData() {
             CoroutineScope(Dispatchers.IO).launch {
-                var data = produceData().first()
-                Log.d(TAG, "collectData: $data")
-//            data
-//                .onStart {
-//                    emit(0)
-//                    Log.d("TAG", "onStart Run ")
-//                }
-//                .onCompletion {
-//                    emit(-7)
-//                    Log.d("TAG", "onCompleted Run: ")
-//                }
-//                .onEach {
-//                    Log.d("TAG", "on Each : upcoming item is $it ")
-//                }
-//                .collect{
-//
-//                Log.d("TAG", "collectData flow consumer 1:  $it")
-//            }
+//                var data = produceData().first()
+                var data = produceData()
+//                Log.d(TAG, "collectData: $data")
+            data
+                .onStart {
+                    emit(0)
+                    Log.d("TAG", "onStart Run ")
+                }
+                .onCompletion {
+                    emit(-7)
+                    Log.d("TAG", "onCompleted Run: ")
+                }
+                .onEach {
+                    Log.d("TAG", "on Each : upcoming item is $it ")
+                }
+                .collect{
+
+                Log.d("TAG", "collectData flow consumer 1:  $it")
+            }
             }
         }
 
