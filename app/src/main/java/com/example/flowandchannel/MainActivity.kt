@@ -8,6 +8,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flow
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.plus
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -28,12 +30,15 @@ class MainActivity : AppCompatActivity() {
     lateinit var consumerProducer: ProducerConsumerChannel
 
     @Inject
+    lateinit var shareFlowConsumerProducer: ShareFlowConsumerProducer
+
+    @Inject
     lateinit var producerConsumerFlow: ProducerConsumerFlow
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // suspend dun example always return single object
+        // suspend fun example always return single object
 //        CoroutineScope(Dispatchers.IO).launch {
 //            user.getUsers().forEach {
 //                Log.d("TAG", "User : ${it} ")
@@ -77,30 +82,30 @@ class MainActivity : AppCompatActivity() {
 //            producerConsumerFlow.collectDataTwo()
 //        }
 
-        CoroutineScope(Dispatchers.Main).launch {
-
-            try {
-                produceNumbers()
-                    .map {
-                        it.uppercase()
-                    }
-                    .filter {
-                        delay(1000)
-                        it.contains('A')
-
-                    }
-                    .flowOn(Dispatchers.IO)
-                    .collect {
-
-                        Log.d("TAG", " Collect at Thread ${Thread.currentThread().name} ,  ${it}")
-
-                    }
-            } catch (e: Exception) {
-                Log.d("TAG", "Error : $e ")
-            }
-
-
-        }
+//        CoroutineScope(Dispatchers.Main).launch {
+//
+//            try {
+//                produceNumbers()
+//                    .map {
+//                        it.uppercase()
+//                    }
+//                    .filter {
+//                        delay(1000)
+//                        it.contains('A')
+//
+//                    }
+//                    .flowOn(Dispatchers.IO)
+//                    .collect {
+//
+//                        Log.d("TAG", " Collect at Thread ${Thread.currentThread().name} ,  ${it}")
+//
+//                    }
+//            } catch (e: Exception) {
+//                Log.d("TAG", "Error : $e ")
+//            }
+//
+//
+//        }
 
 //        CoroutineScope(Dispatchers.Main).launch {
 //            produceNumbers()
@@ -113,7 +118,41 @@ class MainActivity : AppCompatActivity() {
 //                }
 //        }
 
-        Log.d("TAG", "onCreate my flow : ${produceNumbers()}")
+        CoroutineScope(Dispatchers.Main).launch {
+            produceCities()
+            .collect {
+                Log.d("TAG", "Shared Flow 1: $it ")
+            }
+
+        }
+        CoroutineScope(Dispatchers.Main).launch {
+            produceCities()
+                .collect {
+                    delay(1000)
+                    Log.d("TAG", "Shared Flow 2 : $it ")
+                }
+
+        }
+
+//        Log.d("TAG", "onCreate my flow : ${produceNumbers()}")
+    }
+
+    suspend fun produceCities(): Flow<String> {
+        // MutableSharedFlow is hot nature
+        val mutableSharedFlow = MutableSharedFlow<String>()
+        CoroutineScope(Dispatchers.IO).launch {
+
+
+
+            val list = listOf("london", "gaza", "germany")
+
+            list.forEach {
+                mutableSharedFlow.emit(it)
+//                Log.d("TAG", "produceCities: $it")
+//                delay(1000)
+            }
+        }
+        return mutableSharedFlow
     }
 
 
