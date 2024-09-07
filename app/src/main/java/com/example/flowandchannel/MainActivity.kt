@@ -139,7 +139,7 @@ class MainActivity : AppCompatActivity() {
 
     suspend fun produceCities(): Flow<String> {
         // MutableSharedFlow is hot nature
-        val mutableSharedFlow = MutableSharedFlow<String>()
+        val mutableSharedFlow = MutableSharedFlow<String>(2)
         CoroutineScope(Dispatchers.IO).launch {
 
 
